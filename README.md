@@ -70,6 +70,11 @@ LR тестте дәлірек (96% және 88%), бірақ 25 жазбада 
 Бұл инженерлік шешім, дәлелденген артықшылық емес: қолдағы деректе LR жеке жақсы, және бұл жоғарыда адал көрсетілген.
 Келесі қадам — валидацияда араластыру салмағын таңдап, ықтималдықтарды калибрлеу.
 
+<img width="1882" height="965" alt="image" src="https://github.com/user-attachments/assets/61a0c7d9-d818-4325-a054-283ef6eae891" />
+
+<img width="1876" height="966" alt="image" src="https://github.com/user-attachments/assets/86e2f443-fe62-486c-9871-a97026ed56dd" />
+
+
 ## AI Usage Declaration
 Қолданылған құрал: Claude (Anthropic).
 
