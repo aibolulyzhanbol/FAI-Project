@@ -20,7 +20,7 @@ qazguard_engine.py            Python қозғалтқышы + бағалау (da
 data/dataset_kz_small.csv     60 жазба: 30 PHISHING / 30 SAFE, әр жазбаның дереккөзімен
 data/SOURCES.md               дереккөздер және деректердің шығу тегі
 tests/test_engine.py          15 unit-тест (DLP, белгілер, деректер, модельдер, Python мен JS салмақтарының сәйкестігі)
-tools/import_openphish.py     міндетті емес: OpenPhish-тен нақты URL алу (тексерілмеген)
+tools/import_openphish.py     міндетті емес: OpenPhish-тен нақты URL алу
 .github/workflows/ci.yml      GitHub-та тесттерді автоматты іске қосу
 ```
 
