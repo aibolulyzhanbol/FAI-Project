@@ -5,117 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QazGuard PhishLab — AI Phishing Detection & Safety Lab (QAIRU)</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>tailwind.config={theme:{extend:{colors:{
+slate:{50:'#fafafa',100:'#f4f4f5',200:'#e4e4e7',300:'#d4d4d8',400:'#a1a1aa',500:'#71717a',600:'#52525b',700:'#3f3f46',800:'#27272a',900:'#111113',950:'#08080a'},
+rose:{300:'#fca5a5',400:'#f87171',500:'#ef4444',600:'#dc2626',700:'#b91c1c',900:'#450a0a',950:'#260505'},
+blue:{300:'#fca5a5',400:'#f87171',500:'#ef4444',600:'#dc2626',700:'#b91c1c',950:'#260505'},
+indigo:{300:'#fca5a5',400:'#f87171',500:'#ef4444',700:'#b91c1c',950:'#260505'},
+teal:{300:'#fca5a5',400:'#f87171',500:'#ef4444',600:'#dc2626'}}}}}</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #090d16;
-      color: #e2e8f0;
-    }
-    .mono {
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .glass-card {
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid rgba(51, 65, 85, 0.7);
-      backdrop-filter: blur(12px);
-    }
-    .active-tab {
-      background: linear-gradient(135deg, #2563eb 0%, #0d9488 100%);
-      color: #ffffff;
-      border-color: transparent;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    }
-    .custom-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .custom-scroll::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
-    }
-    input[type="range"] {
-      accent-color: #3b82f6;
-    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#050505;color:#e4e4e7}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .glass-card{background:rgba(16,16,18,.82);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(14px)}
+    .custom-scroll::-webkit-scrollbar{width:6px;height:6px}
+    .custom-scroll::-webkit-scrollbar-track{background:#0b0b0c}
+    .custom-scroll::-webkit-scrollbar-thumb{background:#3f3f46;border-radius:3px}
+    input[type=range]{accent-color:#ef4444}
+    .hero-glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 55%,rgba(220,38,38,.20),transparent 70%);pointer-events:none}
+    .globe{width:min(360px,78vw);aspect-ratio:1;border-radius:50%;position:relative;margin:0 auto;
+      background:radial-gradient(circle at 34% 28%,#5a1111 0%,#1b0505 45%,#050101 75%);
+      box-shadow:0 0 90px rgba(239,68,68,.35),inset -30px -30px 80px rgba(0,0,0,.85),inset 12px 12px 40px rgba(239,68,68,.25)}
+    .globe::before{content:"";position:absolute;inset:0;border-radius:50%;opacity:.85;
+      background-image:radial-gradient(rgba(248,113,113,.6) 1.2px,transparent 1.5px);background-size:11px 11px;
+      -webkit-mask:radial-gradient(circle at 34% 28%,#000 0%,transparent 72%);mask:radial-gradient(circle at 34% 28%,#000 0%,transparent 72%)}
+    .ring{position:absolute;left:-20%;right:-20%;top:50%;height:34%;margin-top:-17%;border-radius:50%;
+      border:1.5px solid rgba(248,113,113,.65);box-shadow:0 0 26px rgba(239,68,68,.5);transform:rotate(-18deg)}
+    .ring.r2{transform:rotate(14deg) scale(.92);border-color:rgba(239,68,68,.3);box-shadow:none}
+    .hero-card{background:rgba(18,18,20,.75);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;backdrop-filter:blur(12px);text-align:left}
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
   <!-- Top Header -->
-  <header class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-teal-500 flex items-center justify-center shadow-lg shadow-blue-600/20 font-extrabold text-white text-lg">
-          QG
+  <header class="sticky top-0 z-40 border-b border-white/5 bg-black/70 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <a href="#top" class="flex items-center gap-2.5">
+        <span class="w-2.5 h-2.5 rounded-sm bg-red-500 rotate-45 shadow-[0_0_12px_rgba(239,68,68,.9)]"></span>
+        <span class="font-semibold tracking-tight text-white">QazGuard</span>
+      </a>
+      <nav class="flex items-center gap-4 sm:gap-8">
+        <button id="tabBtnScanner" onclick="switchTab('scanner')" class="tab-btn text-red-500 text-xs sm:text-sm font-medium transition" data-i18n="nav_scanner">Сканер</button>
+        <button id="tabBtnTraining" onclick="switchTab('training')" class="tab-btn text-zinc-300 hover:text-white text-xs sm:text-sm font-medium transition" data-i18n="nav_training">Байес & Оқыту</button>
+        <button id="tabBtnTesting" onclick="switchTab('testing')" class="tab-btn text-zinc-300 hover:text-white text-xs sm:text-sm font-medium transition" data-i18n="nav_testing">Тестілеу</button>
+      </nav>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center bg-white/5 p-0.5 rounded-full border border-white/10">
+          <button id="langKzBtn" onclick="setLanguage('kk')" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-600 text-white transition">KZ</button>
+          <button id="langEnBtn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full text-xs font-bold text-slate-400 hover:text-white transition">EN</button>
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-bold text-base sm:text-lg text-white tracking-tight">QazGuard PhishLab</h1>
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">Project #31</span>
-          </div>
-          <p id="headerSubtitle" class="text-xs text-slate-400">QAIRU AI Fundamentals Final Project • Weeks 6, 8, 10</p>
-        </div>
-      </div>
-
-      <!-- Navigation & Language Switch -->
-      <div class="flex flex-wrap items-center gap-2">
-        <nav class="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
-          <button id="tabBtnScanner" onclick="switchTab('scanner')" class="tab-btn active-tab text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition">
-            🔍 <span data-i18n="nav_scanner">AI Сканер</span>
-          </button>
-          <button id="tabBtnTraining" onclick="switchTab('training')" class="tab-btn text-slate-300 hover:text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition">
-            🧠 <span data-i18n="nav_training">Байес & Оқыту</span>
-          </button>
-          <button id="tabBtnTesting" onclick="switchTab('testing')" class="tab-btn text-slate-300 hover:text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition">
-            📊 <span data-i18n="nav_testing">Тестілеу (25 кейс / 60 датасет)</span>
-          </button>
-          <button id="tabBtnDocs" onclick="switchTab('docs')" class="tab-btn text-slate-300 hover:text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition">
-            📄 <span data-i18n="nav_docs">Құжаттама & GitHub</span>
-          </button>
-        </nav>
-
-        <!-- KZ / EN Switcher -->
-        <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800">
-          <button id="langKzBtn" onclick="setLanguage('kk')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition">KZ</button>
-          <button id="langEnBtn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">EN</button>
-        </div>
+        <button onclick="goLab()" class="hidden sm:block px-4 py-2 rounded-full bg-red-600 hover:bg-red-500 text-white text-sm font-semibold shadow-lg shadow-red-600/30 transition" data-i18n="hero_cta1">Талдауды бастау</button>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-
-    <!-- Syllabus Banner -->
-    <section class="glass-card rounded-2xl p-4 border border-slate-800/90">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
-          <div class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold text-xs mono shrink-0">WEEK 6</div>
-          <div>
-            <h2 class="text-xs sm:text-sm font-semibold text-white" data-i18n="w6_title">Probability & Bayesian Networks</h2>
-            <p class="text-xs text-slate-400 mt-0.5" data-i18n="w6_desc">Multinomial Naive Bayes + Laplace Smoothing (α) мәтіндік токендердің ықтималдығын есептейді.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
-          <div class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs mono shrink-0">WEEK 8</div>
-          <div>
-            <h2 class="text-xs sm:text-sm font-semibold text-white" data-i18n="w8_title">Rational Decision-Making & Classical ML</h2>
-            <p class="text-xs text-slate-400 mt-0.5" data-i18n="w8_desc">Logistic Regression URL/құрылымдық белгілерді бағалайды + Expected Utility шешім матрицасы.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800">
-          <div class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-bold text-xs mono shrink-0">WEEK 10</div>
-          <div>
-            <h2 class="text-xs sm:text-sm font-semibold text-white" data-i18n="w10_title">LLMs, Generative AI & AI Safety</h2>
-            <p class="text-xs text-slate-400 mt-0.5" data-i18n="w10_desc">Prompt Injection детекторы және ЖСН (Checksum), банк картасы (Luhn), телефон DLP-токенизациясы.</p>
-          </div>
-        </div>
+  <section id="top" class="relative overflow-hidden pt-14 pb-10">
+    <div class="hero-glow"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs text-zinc-300"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span data-i18n="hero_badge">AI негізіндегі қорғаныс</span></span>
+      <h1 class="mt-6 text-4xl sm:text-6xl font-bold tracking-tight leading-[1.08] text-white"><span data-i18n="hero_t1">Фишингті анықтаңыз</span><br><span class="text-red-500" data-i18n="hero_t2">жасанды интеллектпен</span></h1>
+      <p class="mt-5 max-w-xl mx-auto text-sm sm:text-base text-zinc-400" data-i18n="hero_sub">Хабарлама мен сілтемені талдап, BLOCK, QUARANTINE немесе ALLOW шешімін таңдайды және жеке деректерді жасырады.</p>
+      <div class="mt-7 flex items-center justify-center gap-3">
+        <button onclick="goLab()" class="px-6 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-sm font-semibold shadow-lg shadow-red-600/30 transition" data-i18n="hero_cta1">Талдауды бастау</button>
+        <button onclick="switchTab('testing')" class="px-6 py-2.5 rounded-full border border-white/15 hover:bg-white/5 text-white text-sm font-semibold transition" data-i18n="hero_cta2">Нәтижелерді көру</button>
       </div>
-    </section>
+      <div class="relative mt-14 lg:min-h-[400px]">
+        <div class="globe"><div class="ring"></div><div class="ring r2"></div></div>
+        <div class="hero-card mt-4 lg:mt-0 lg:absolute lg:left-0 lg:top-2 lg:w-60"><div class="mono text-[11px] text-red-400 font-bold">WEEK 6</div><div class="text-sm font-semibold text-white mt-1" data-i18n="c1_t">Naive Bayes</div><p class="text-xs text-zinc-400 mt-1" data-i18n="c1_d">Мәтін токендері бойынша ықтималдық</p></div>
+        <div class="hero-card mt-3 lg:mt-0 lg:absolute lg:left-0 lg:bottom-0 lg:w-60"><div class="mono text-[11px] text-red-400 font-bold">WEEK 8</div><div class="text-sm font-semibold text-white mt-1" data-i18n="c2_t">Logistic Regression</div><p class="text-xs text-zinc-400 mt-1" data-i18n="c2_d">URL белгілері және MEU шешімі</p></div>
+        <div class="hero-card mt-3 lg:mt-0 lg:absolute lg:right-0 lg:top-2 lg:w-60"><div class="mono text-[11px] text-red-400 font-bold">WEEK 10</div><div class="text-sm font-semibold text-white mt-1" data-i18n="c3_t">AI Safety</div><p class="text-xs text-zinc-400 mt-1" data-i18n="c3_d">Prompt injection және DLP</p></div>
+        <div class="hero-card mt-3 lg:mt-0 lg:absolute lg:right-0 lg:bottom-0 lg:w-60"><div class="mono text-[11px] text-red-400 font-bold">BENCHMARK</div><div class="text-sm font-semibold text-white mt-1" data-i18n="c4_t">Бақылау жиыны</div><p class="text-xs text-zinc-400 mt-1" data-i18n="c4_d">60 жазба, 25 тест-кейс</p></div>
+      </div>
+      <div class="glass-card rounded-2xl max-w-3xl mx-auto mt-10 grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/5 text-center py-4">
+        <div><div class="text-xl font-bold text-white mono">88%</div><div class="text-[11px] text-zinc-400" data-i18n="s1">Accuracy (test)</div></div>
+        <div><div class="text-xl font-bold text-white mono">60</div><div class="text-[11px] text-zinc-400" data-i18n="s2">Жазба</div></div>
+        <div><div class="text-xl font-bold text-white mono">15/15</div><div class="text-[11px] text-zinc-400" data-i18n="s3">Unit-тест</div></div>
+        <div><div class="text-xl font-bold text-white mono">3</div><div class="text-[11px] text-zinc-400" data-i18n="s4">AI тақырыбы</div></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pb-10 space-y-6">
+    <div id="lab" class="scroll-mt-20"></div>
 
     <!-- TAB 1: LIVE AI SCANNER -->
     <div id="tab-scanner" class="space-y-6">
@@ -126,34 +97,17 @@
           <div class="glass-card rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between">
               <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span>🛡️</span> <span data-i18n="input_panel_title">Кіріс деректер және сценарийлер</span>
+                <span></span> <span data-i18n="input_panel_title">Кіріс деректер және сценарийлер</span>
               </h2>
               <span class="text-xs text-slate-400 mono" id="charCountBadge">0 chars</span>
             </div>
 
-            <!-- Preset Buttons -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-2" data-i18n="preset_label">Дайын тест сценарийін таңдаңыз:</label>
-              <div class="grid grid-cols-2 gap-2">
-                <button onclick="loadPreset('kaspi_phish')" class="text-left text-xs p-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 border border-rose-700/40 text-rose-200 transition">
-                  🚨 <span class="font-semibold" data-i18n="preset_1">Kaspi SMS Фишинг</span>
-                </button>
-                <button onclick="loadPreset('egov_scam')" class="text-left text-xs p-2.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-700/40 text-amber-200 transition">
-                  ⚠️ <span class="font-semibold" data-i18n="preset_2">eGov Төлем + ЖСН</span>
-                </button>
-                <button onclick="loadPreset('prompt_attack')" class="text-left text-xs p-2.5 rounded-xl bg-purple-950/40 hover:bg-purple-900/50 border border-purple-700/40 text-purple-200 transition">
-                  🤖 <span class="font-semibold" data-i18n="preset_3">Prompt Injection + DLP</span>
-                </button>
-                <button onclick="loadPreset('qairu_safe')" class="text-left text-xs p-2.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-700/40 text-emerald-200 transition">
-                  ✅ <span class="font-semibold" data-i18n="preset_4">QAIRU Ресми хабарлама</span>
-                </button>
-              </div>
-            </div>
+            
 
             <!-- URL Input -->
             <div>
               <label for="urlInput" class="block text-xs font-medium text-slate-300 mb-1" data-i18n="url_label">Тексерілетін URL сілтеме (Week 8 ML Feature Extractor):</label>
-              <input id="urlInput" type="text" oninput="runAnalysis()" placeholder="https://kaspi-kz-bonus-verify.xyz/login"
+              <input id="urlInput" type="text" oninput="runAnalysis()" placeholder="https://..."
                 class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white mono focus:outline-none focus:border-blue-500" />
             </div>
 
@@ -162,12 +116,12 @@
               <label for="messageInput" class="block text-xs font-medium text-slate-300 mb-1" data-i18n="msg_label">SMS, Email немесе LLM Промпт мәтіні (Week 6 & Week 10):</label>
               <textarea id="messageInput" rows="5" oninput="runAnalysis()"
                 class="w-full p-3.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-blue-500 leading-relaxed"
-                placeholder="Мәтінді осында енгізіңіз..."></textarea>
+                placeholder="SMS, email немесе мәтінді осында жазыңыз немесе қойыңыз..."></textarea>
             </div>
 
             <div class="flex items-center gap-2 pt-1">
-              <button onclick="runAnalysis()" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 transition">
-                ⚡ <span data-i18n="btn_analyze">AI Талдауды іске қосу</span>
+              <button onclick="runAnalysis()" class="flex-1 py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/25 transition">
+                <span data-i18n="btn_analyze">AI Талдауды іске қосу</span>
               </button>
               <button onclick="clearScanner()" class="py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition" data-i18n="btn_clear">
                 Тазалау
@@ -179,7 +133,7 @@
           <div class="glass-card rounded-2xl p-5 space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                <span>🎛️</span> <span data-i18n="params_title">Алгоритм гиперпараметрлері</span>
+                <span></span> <span data-i18n="params_title">Алгоритм гиперпараметрлері</span>
               </h3>
               <button onclick="resetHyperparams()" class="text-xs text-blue-400 hover:text-blue-300 underline" data-i18n="params_reset">Әдепкі мәндер</button>
             </div>
@@ -343,7 +297,7 @@
     <div id="tab-training" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 glass-card rounded-2xl p-5 space-y-4">
-          <h2 class="text-base font-bold text-white" data-i18n="train_title">🧠 Байес корпусын интерактивті оқыту (Week 6 Live Retraining)</h2>
+          <h2 class="text-base font-bold text-white" data-i18n="train_title">Байес корпусын интерактивті оқыту (Week 6 Live Retraining)</h2>
           <p class="text-xs text-slate-300 leading-relaxed" data-i18n="train_desc">
             Жаңа хабарлама үлгісін «Фишинг» немесе «Қауіпсіз» ретінде қосыңыз. Модель сөздік қордағы жиіліктерді лезде қайта есептейді.
           </p>
@@ -356,10 +310,10 @@
 
           <div class="grid grid-cols-2 gap-3">
             <button onclick="addTrainingExample('phish')" class="py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition">
-              ➕ <span data-i18n="btn_train_phish">Фишинг ретінде оқыту</span>
+              <span data-i18n="btn_train_phish">Фишинг ретінде оқыту</span>
             </button>
             <button onclick="addTrainingExample('safe')" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">
-              ➕ <span data-i18n="btn_train_safe">Қауіпсіз ретінде оқыту</span>
+              <span data-i18n="btn_train_safe">Қауіпсіз ретінде оқыту</span>
             </button>
           </div>
 
@@ -411,11 +365,11 @@
       <div class="glass-card rounded-2xl p-5 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-white" data-i18n="bench_title">📊 Алгоритмдерді тестілеу және метрикалар (Section 8 Evaluation)</h2>
+            <h2 class="text-base sm:text-lg font-bold text-white" data-i18n="bench_title">Алгоритмдерді тестілеу және метрикалар (Section 8 Evaluation)</h2>
             <p class="text-xs text-slate-400 mt-0.5" data-i18n="bench_subtitle">60 жазбалық датасет (35 оқыту + 25 бақылау тест-кейсі) бойынша Accuracy, Precision, Recall, F1-Score және Confusion Matrix есептеу.</p>
           </div>
           <button onclick="runBenchmarkSuite()" class="py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-600/25 transition">
-            ▶ <span data-i18n="btn_run_bench">Барлық 25 тестті қайта орындау</span>
+            <span data-i18n="btn_run_bench">Барлық 25 тестті қайта орындау</span>
           </button>
         </div>
 
@@ -445,7 +399,7 @@
 
         <!-- Section 8 Error Analysis & Limitations Box -->
         <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs text-slate-300 space-y-1.5">
-          <div class="font-bold text-amber-300" data-i18n="limit_box_title">⚠️ 8-бөлім: Қателерді талдау және Модель шектеулері (FP & FN Error Analysis)</div>
+          <div class="font-bold text-amber-300" data-i18n="limit_box_title">8-бөлім: Қателерді талдау және Модель шектеулері (FP & FN Error Analysis)</div>
           <p data-i18n="limit_box_desc">Нақты ML жүйелерінде нәтиже деректер көлеміне өте тәуелді. Біздің бақылау жиынында (25 жазба, шабуыл схемасы бойынша бөлінген) біріккен модель 3 қате жібереді (№30, №36, №37): №30 — сілтемесіз «қашықтан жұмыс» алаяқтығы (False Negative), №36 және №37 — «ИИН, карта, SMS-код» сөздері бар ресми қауіпсіздік ескертулері (False Positive). Датасет шағын (60 жазба), сондықтан метрикалар тек шамамен баға. Мәтіндердің көбі ашық дереккөздердегі схемалардың сипаттамасына негізделген (data/SOURCES.md).</p>
         </div>
 
@@ -469,62 +423,6 @@
         </div>
       </div>
     </div>
-
-    <!-- TAB 4: DOCUMENTATION, PROPOSAL & DEFENSE Q&A -->
-    <div id="tab-docs" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <!-- Section 13 Topic Approval Form -->
-        <div class="glass-card rounded-2xl p-5 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h2 class="text-base font-bold text-white" data-i18n="doc_proposal_title">📋 13-бөлім: Жоба тақырыбын бекіту парағы (Project Proposal)</h2>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">Ready for Submission</span>
-          </div>
-          <div class="space-y-2.5 text-xs text-slate-300 leading-relaxed">
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <span class="text-slate-400 font-semibold">Жоба атауы / Project Title:</span>
-              <div class="text-white font-bold mt-0.5">QazGuard PhishLab — AI Phishing Detection & LLM Safety Lab (#31)</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <span class="text-slate-400 font-semibold">Орындаушы / Developer:</span>
-              <div class="text-white font-bold mt-0.5">Жанбол Айболұлы (Qazaq AI Research University — QAIRU, IT / AI & Data Engineering)</div>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span class="text-slate-400 font-semibold">Іске асырылған 3 AI тақырыбы (Syllabus Weeks):</span>
-              <ul class="list-disc list-inside text-slate-200 space-y-1 mt-1">
-                <li><b>Week 6 (Probability & Bayesian Networks):</b> Лаплас тегістеуі бар көпмүшелік Наивті Байес классификаторы.</li>
-                <li><b>Week 8 (Rational Decision-Making & Classical ML):</b> 6 URL/құрылымдық белгі бойынша Логистикалық регрессия + Максималды күтілетін пайдалылық (MEU) шешім матрицасы.</li>
-                <li><b>Week 10 (LLMs, Generative AI & AI Safety):</b> Prompt Injection эвристикалық сканері және ҚР ЖСН (Модуль 11 бақылау сомасы) мен банк карталарын (Luhn) DLP-токенизациялау.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Defense Q&A Preparation (Section 11) -->
-        <div class="glass-card rounded-2xl p-5 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h2 class="text-base font-bold text-white" data-i18n="doc_qa_title">🎓 11-бөлім: Жобаны қорғау сұрақтары (Defense Q&A)</h2>
-            <span class="text-xs mono text-blue-400">10-Minute Defense Ready</span>
-          </div>
-          <div class="space-y-3 text-xs leading-relaxed">
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <div class="font-bold text-indigo-300">Q1 (Week 6): Неліктен Наивті Байесте Лаплас тегістеуі (α) қолданылады?</div>
-              <p class="text-slate-300 mt-1">Егер жаңа сөз оқыту корпусында кездеспесе, P(wᵢ | C) = 0 болып, бүкіл көбейтінді нөлге айналады (Zero-Frequency Problem). α > 0 қосу арқылы ықтималдық ешқашан нөлге тең болмайды.</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <div class="font-bold text-emerald-300">Q2 (Week 8): Жай шекті мәннен (Threshold 50%) Рационалды агенттің (Expected Utility) айырмашылығы неде?</div>
-              <p class="text-slate-300 mt-1">Киберқауіпсіздікте фишингті өткізіп алу қатесі (False Negative) қауіпсіз хатты тексеруге жіберуден (False Positive) әлдеқайда қымбат. MEU агенті C(FN) шығынын ескеріп, оңтайлы BLOCK / QUARANTINE / ALLOW әрекетін таңдайды.</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <div class="font-bold text-amber-300">Q3 (Week 10): ҚР ЖСН (ИИН) жай 12 цифрдан қалай ажыратылады?</div>
-              <p class="text-slate-300 mt-1">12-ші разряд алдыңғы 11 цифрдың салмақтық қосындысынан Модуль 11 бойынша есептеледі: c = (∑ aᵢ·wᵢ) mod 11. Бұл кездейсоқ 12 таңбалы сандарды жалған позитив ретінде белгілеуден қорғайды.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
   </main>
 
   <script>
@@ -538,122 +436,161 @@
     let currentLang = 'kk';
 
     const I18N = {
-      kk: {
-        nav_scanner: "AI Сканер",
-        nav_training: "Байес & Оқыту",
-        nav_testing: "Тестілеу (25 кейс / 60 датасет)",
-        nav_docs: "Құжаттама & Қорғау",
-        w6_title: "Ықтималдық және Байес желілері",
-        w6_desc: "Multinomial Naive Bayes + Laplace Smoothing (α) мәтіндік токендердің фишинг ықтималдығын есептейді.",
-        w8_title: "Рационалды шешім және Классикалық ML",
-        w8_desc: "Logistic Regression URL/құрылымдық белгілерді бағалайды + Expected Utility шешім матрицасы.",
-        w10_title: "LLM, Генеративті AI және AI Қауіпсіздігі",
-        w10_desc: "Prompt Injection детекторы және ЖСН (Checksum), банк картасы (Luhn), телефон DLP-токенизациясы.",
-        input_panel_title: "Кіріс деректер және сценарийлер",
-        preset_label: "Дайын тест сценарийін таңдаңыз:",
-        preset_1: "Kaspi SMS Фишинг",
-        preset_2: "eGov Төлем + ЖСН",
-        preset_3: "Prompt Injection + DLP",
-        preset_4: "QAIRU Ресми хабарлама",
-        url_label: "Тексерілетін URL сілтеме (Week 8 ML Feature Extractor):",
-        msg_label: "SMS, Email немесе LLM Промпт мәтіні (Week 6 & Week 10):",
-        btn_analyze: "AI Талдауды іске қосу",
-        btn_clear: "Тазалау",
-        params_title: "Алгоритм гиперпараметрлері",
-        params_reset: "Әдепкі мәндер",
-        param_prior: "Априорлық ықтималдық P(Phishing):",
-        param_alpha: "Лаплас тегістеу коэффициенті (α):",
-        param_cost: "Фишингті өткізіп алу шығыны C(FN):",
-        combined_risk_label: "Біріктірілген қатер",
-        m1_heading: "1. Наивті Байес классификаторы (Multinomial Naive Bayes)",
-        th_token: "Токен (Сөз)",
-        th_lr: "Фишинг индексі",
-        m2_heading: "2. Логистикалық регрессия және Күтілетін пайдалылық (Expected Utility)",
-        ml_chart_title: "Белгілердің үлесі (Feature Weights wᵢ × xᵢ)",
-        eu_title: "Рационалды агент шешімі (Maximum Expected Utility)",
-        eu_subtitle: "EU(a) = P(Phish)·U(a, Phish) + (1 - P(Phish))·U(a, Safe)",
-        m3_heading: "3. AI Safety Guardrail: Prompt Injection & ҚР Деректерді Токенизациялау (DLP)",
-        dlp_entities_title: "Анықталған құпия деректер (ЖСН Модуль 11 & Luhn) және Шабуылдар:",
-        sanitized_title: "LLM-ге жіберілетін қауіпсіз (Токенизацияланған) мәтін:",
-        btn_copy: "Көшіру",
-        train_title: "🧠 Байес корпусын интерактивті оқыту (Week 6 Live Retraining)",
-        train_desc: "Жаңа хабарлама үлгісін «Фишинг» немесе «Қауіпсіз» ретінде қосыңыз. Модель сөздік қордағы жиіліктерді лезде қайта есептейді.",
-        train_input_label: "Жаңа оқыту сөйлемі (KZ / EN):",
-        btn_train_phish: "Фишинг ретінде оқыту",
-        btn_train_safe: "Қауіпсіз ретінде оқыту",
-        stat_vocab: "Сөздік көлемі |V|",
-        stat_phish_tokens: "Phish токендері",
-        stat_safe_tokens: "Safe токендері",
-        vocab_table_title: "Байес ықтималдықтар кестесі (Top Discriminative Tokens)",
-        bench_title: "📊 Алгоритмдерді тестілеу және метрикалар (Section 8 Evaluation)",
-        bench_subtitle: "60 жазбалық датасет (35 оқыту + 25 бақылау тест-кейсі) бойынша Accuracy, Precision, Recall, F1-Score және Confusion Matrix есептеу.",
-        btn_run_bench: "Барлық 25 тестті қайта орындау",
-        th_case: "Тест сипаттамасы және кіріс дерегі",
-        th_expected: "Күтілетін класс",
-        th_predicted: "Болжам",
-        th_action: "Тексеру",
-        doc_proposal_title: "📋 13-бөлім: Жоба тақырыбын бекіту парағы (Project Proposal)",
-        doc_qa_title: "🎓 11-бөлім: Жобаны қорғау сұрақтары (Defense Q&A)",
-        limit_box_title: "⚠️ 8-бөлім: Қателерді талдау және Модель шектеулері (FP & FN Error Analysis)",
-        limit_box_desc: "Нақты ML жүйелерінде нәтиже деректер көлеміне өте тәуелді. Біздің бақылау жиынында (25 жазба, шабуыл схемасы бойынша бөлінген) біріккен модель 3 қате жібереді (№30, №36, №37): №30 — сілтемесіз «қашықтан жұмыс» алаяқтығы (False Negative), №36 және №37 — «ИИН, карта, SMS-код» сөздері бар ресми қауіпсіздік ескертулері (False Positive). Датасет шағын (60 жазба), сондықтан метрикалар тек шамамен баға. Мәтіндердің көбі ашық дереккөздердегі схемалардың сипаттамасына негізделген (data/SOURCES.md).",
-        nav_training: "Bayes & Retraining",
-        nav_testing: "Benchmark (25 Cases / 60 Dataset)",
-        nav_docs: "Docs & Defense Q&A",
-        w6_title: "Probability & Bayesian Networks",
-        w6_desc: "Multinomial Naive Bayes with Laplace Smoothing (α) computes posterior phishing probability across tokens.",
-        w8_title: "Rational Decision-Making & Classical ML",
-        w8_desc: "Logistic Regression evaluates URL/structural features + Expected Utility decision matrix.",
-        w10_title: "LLMs, Generative AI & AI Safety",
-        w10_desc: "Prompt Injection guardrail and KZ IIN (Modulo-11 Checksum), Bank Card (Luhn), & Phone DLP tokenizer.",
-        input_panel_title: "Input Data & Scenarios",
-        preset_label: "Select a ready test scenario:",
-        preset_1: "Kaspi SMS Phishing",
-        preset_2: "eGov Scam + KZ IIN",
-        preset_3: "Prompt Injection + DLP",
-        preset_4: "QAIRU Official Notice",
-        url_label: "Target URL to Inspect (Week 8 ML Feature Extractor):",
-        msg_label: "SMS, Email, or LLM Prompt Text (Week 6 & Week 10):",
-        btn_analyze: "Run AI Analysis",
-        btn_clear: "Clear",
-        params_title: "Algorithm Hyperparameters",
-        params_reset: "Reset Defaults",
-        param_prior: "Prior Probability P(Phishing):",
-        param_alpha: "Laplace Smoothing Factor (α):",
-        param_cost: "False Negative Cost C(FN):",
-        combined_risk_label: "Combined Risk",
-        m1_heading: "1. Multinomial Naive Bayes Classifier (Week 6)",
-        th_token: "Token (Word)",
-        th_lr: "Likelihood Ratio",
-        m2_heading: "2. Logistic Regression & Expected Utility Decision (Week 8)",
-        ml_chart_title: "Feature Contributions (wᵢ × xᵢ)",
-        eu_title: "Rational Agent Decision (Maximum Expected Utility)",
-        eu_subtitle: "EU(a) = P(Phish)·U(a, Phish) + (1 - P(Phish))·U(a, Safe)",
-        m3_heading: "3. AI Safety Guardrail: Prompt Injection & KZ DLP Tokenizer (Week 10)",
-        dlp_entities_title: "Detected PII Entities (KZ IIN Mod-11 & Luhn) & Prompt Attacks:",
-        sanitized_title: "Sanitized (Tokenized) Safe Prompt for LLM:",
-        btn_copy: "Copy",
-        train_title: "🧠 Interactive Bayesian Corpus Retraining (Week 6)",
-        train_desc: "Add a new sample message as 'Phishing' or 'Safe'. The model updates token counts and likelihoods in real time.",
-        train_input_label: "New Training Sentence (KZ / EN):",
-        btn_train_phish: "Train as Phishing",
-        btn_train_safe: "Train as Safe",
-        stat_vocab: "Vocabulary Size |V|",
-        stat_phish_tokens: "Phish Token Count",
-        stat_safe_tokens: "Safe Token Count",
-        vocab_table_title: "Bayesian Likelihood Table (Top Discriminative Tokens)",
-        bench_title: "📊 Algorithm Testing & Evaluation Metrics (Section 8)",
-        bench_subtitle: "Live Accuracy, Precision, Recall, F1-Score and Confusion Matrix across 60 records (35 training + 25 held-out test cases, split by scam scheme).",
-        btn_run_bench: "Re-run All 25 Tests",
-        th_case: "Test Case & Input Snippet",
-        th_expected: "Ground Truth",
-        th_predicted: "Prediction",
-        th_action: "Inspect",
-        doc_proposal_title: "📋 Section 13: Project Topic Approval Sheet",
-        doc_qa_title: "🎓 Section 11: Project Defense Q&A Guide",
-        limit_box_title: "⚠️ Section 8: Error Analysis & Model Limitations (FP & FN Edge Cases)",
-        limit_box_desc: "Real-world ML results depend heavily on data size. On our held-out set (25 records, split by scam scheme) the combined model makes 3 errors (№30, №36, №37): #30 is a link-less 'remote job' scam (False Negative); #36 and #37 are official security advisories that mention IIN/card/SMS-code words (False Positive). With only 60 records the metrics are rough estimates. Most texts are reconstructed from schemes described in public warnings (see data/SOURCES.md)."
-      }
-    };
+  "kk": {
+    "nav_scanner": "Сканер",
+    "nav_training": "Байес & Оқыту",
+    "nav_testing": "Тестілеу",
+    "nav_docs": "Құжаттама & Қорғау",
+    "w6_title": "Ықтималдық және Байес желілері",
+    "w6_desc": "Multinomial Naive Bayes + Laplace Smoothing (α) мәтіндік токендердің фишинг ықтималдығын есептейді.",
+    "w8_title": "Рационалды шешім және Классикалық ML",
+    "w8_desc": "Logistic Regression URL/құрылымдық белгілерді бағалайды + Expected Utility шешім матрицасы.",
+    "w10_title": "LLM, Генеративті AI және AI Қауіпсіздігі",
+    "w10_desc": "Prompt Injection детекторы және ЖСН (Checksum), банк картасы (Luhn), телефон DLP-токенизациясы.",
+    "input_panel_title": "Кіріс деректер және сценарийлер",
+    "preset_label": "Дайын тест сценарийін таңдаңыз:",
+    "preset_1": "Kaspi SMS Фишинг",
+    "preset_2": "eGov Төлем + ЖСН",
+    "preset_3": "Prompt Injection + DLP",
+    "preset_4": "QAIRU Ресми хабарлама",
+    "url_label": "Тексерілетін URL сілтеме (Week 8 ML Feature Extractor):",
+    "msg_label": "SMS, Email немесе LLM Промпт мәтіні (Week 6 & Week 10):",
+    "btn_analyze": "AI Талдауды іске қосу",
+    "btn_clear": "Тазалау",
+    "params_title": "Алгоритм гиперпараметрлері",
+    "params_reset": "Әдепкі мәндер",
+    "param_prior": "Априорлық ықтималдық P(Phishing):",
+    "param_alpha": "Лаплас тегістеу коэффициенті (α):",
+    "param_cost": "Фишингті өткізіп алу шығыны C(FN):",
+    "combined_risk_label": "Біріктірілген қатер",
+    "m1_heading": "1. Наивті Байес классификаторы (Multinomial Naive Bayes)",
+    "th_token": "Токен (Сөз)",
+    "th_lr": "Фишинг индексі",
+    "m2_heading": "2. Логистикалық регрессия және Күтілетін пайдалылық (Expected Utility)",
+    "ml_chart_title": "Белгілердің үлесі (Feature Weights wᵢ × xᵢ)",
+    "eu_title": "Рационалды агент шешімі (Maximum Expected Utility)",
+    "eu_subtitle": "EU(a) = P(Phish)·U(a, Phish) + (1 - P(Phish))·U(a, Safe)",
+    "m3_heading": "3. AI Safety Guardrail: Prompt Injection & ҚР Деректерді Токенизациялау (DLP)",
+    "dlp_entities_title": "Анықталған құпия деректер (ЖСН Модуль 11 & Luhn) және Шабуылдар:",
+    "sanitized_title": "LLM-ге жіберілетін қауіпсіз (Токенизацияланған) мәтін:",
+    "btn_copy": "Көшіру",
+    "train_title": "Байес корпусын интерактивті оқыту (Week 6 Live Retraining)",
+    "train_desc": "Жаңа хабарлама үлгісін «Фишинг» немесе «Қауіпсіз» ретінде қосыңыз. Модель сөздік қордағы жиіліктерді лезде қайта есептейді.",
+    "train_input_label": "Жаңа оқыту сөйлемі (KZ / EN):",
+    "btn_train_phish": "Фишинг ретінде оқыту",
+    "btn_train_safe": "Қауіпсіз ретінде оқыту",
+    "stat_vocab": "Сөздік көлемі |V|",
+    "stat_phish_tokens": "Phish токендері",
+    "stat_safe_tokens": "Safe токендері",
+    "vocab_table_title": "Байес ықтималдықтар кестесі (Top Discriminative Tokens)",
+    "bench_title": "Алгоритмдерді тестілеу және метрикалар (Section 8 Evaluation)",
+    "bench_subtitle": "60 жазбалық датасет (35 оқыту + 25 бақылау тест-кейсі) бойынша Accuracy, Precision, Recall, F1-Score және Confusion Matrix есептеу.",
+    "btn_run_bench": "Барлық 25 тестті қайта орындау",
+    "th_case": "Тест сипаттамасы және кіріс дерегі",
+    "th_expected": "Күтілетін класс",
+    "th_predicted": "Болжам",
+    "th_action": "Тексеру",
+    "doc_proposal_title": "13-бөлім: Жоба тақырыбын бекіту парағы (Project Proposal)",
+    "doc_qa_title": "11-бөлім: Жобаны қорғау сұрақтары (Defense Q&A)",
+    "limit_box_title": "8-бөлім: Қателерді талдау және Модель шектеулері (FP & FN Error Analysis)",
+    "limit_box_desc": "Нақты ML жүйелерінде нәтиже деректер көлеміне өте тәуелді. Біздің бақылау жиынында (25 жазба, шабуыл схемасы бойынша бөлінген) біріккен модель 3 қате жібереді (№30, №36, №37): №30 — сілтемесіз «қашықтан жұмыс» алаяқтығы (False Negative), №36 және №37 — «ИИН, карта, SMS-код» сөздері бар ресми қауіпсіздік ескертулері (False Positive). Датасет шағын (60 жазба), сондықтан метрикалар тек шамамен баға. Мәтіндердің көбі ашық дереккөздердегі схемалардың сипаттамасына негізделген (data/SOURCES.md).",
+    "hero_badge": "AI негізіндегі қорғаныс",
+    "hero_t1": "Фишингті анықтаңыз",
+    "hero_t2": "жасанды интеллектпен",
+    "hero_sub": "Хабарлама мен сілтемені талдап, BLOCK, QUARANTINE немесе ALLOW шешімін таңдайды және жеке деректерді жасырады.",
+    "hero_cta1": "Талдауды бастау",
+    "hero_cta2": "Нәтижелерді көру",
+    "c1_t": "Naive Bayes",
+    "c1_d": "Мәтін токендері бойынша ықтималдық",
+    "c2_t": "Logistic Regression",
+    "c2_d": "URL белгілері және MEU шешімі",
+    "c3_t": "AI Safety",
+    "c3_d": "Prompt injection және DLP",
+    "c4_t": "Бақылау жиыны",
+    "c4_d": "60 жазба, 25 тест-кейс",
+    "s1": "Accuracy (test)",
+    "s2": "Жазба",
+    "s3": "Unit-тест",
+    "s4": "AI тақырыбы"
+  },
+  "en": {
+    "nav_training": "Bayes & Retraining",
+    "nav_testing": "Benchmark",
+    "nav_docs": "Docs & Defense Q&A",
+    "w6_title": "Probability & Bayesian Networks",
+    "w6_desc": "Multinomial Naive Bayes with Laplace Smoothing (α) computes posterior phishing probability across tokens.",
+    "w8_title": "Rational Decision-Making & Classical ML",
+    "w8_desc": "Logistic Regression evaluates URL/structural features + Expected Utility decision matrix.",
+    "w10_title": "LLMs, Generative AI & AI Safety",
+    "w10_desc": "Prompt Injection guardrail and KZ IIN (Modulo-11 Checksum), Bank Card (Luhn), & Phone DLP tokenizer.",
+    "input_panel_title": "Input Data & Scenarios",
+    "preset_label": "Select a ready test scenario:",
+    "preset_1": "Kaspi SMS Phishing",
+    "preset_2": "eGov Scam + KZ IIN",
+    "preset_3": "Prompt Injection + DLP",
+    "preset_4": "QAIRU Official Notice",
+    "url_label": "Target URL to Inspect (Week 8 ML Feature Extractor):",
+    "msg_label": "SMS, Email, or LLM Prompt Text (Week 6 & Week 10):",
+    "btn_analyze": "Run AI Analysis",
+    "btn_clear": "Clear",
+    "params_title": "Algorithm Hyperparameters",
+    "params_reset": "Reset Defaults",
+    "param_prior": "Prior Probability P(Phishing):",
+    "param_alpha": "Laplace Smoothing Factor (α):",
+    "param_cost": "False Negative Cost C(FN):",
+    "combined_risk_label": "Combined Risk",
+    "m1_heading": "1. Multinomial Naive Bayes Classifier (Week 6)",
+    "th_token": "Token (Word)",
+    "th_lr": "Likelihood Ratio",
+    "m2_heading": "2. Logistic Regression & Expected Utility Decision (Week 8)",
+    "ml_chart_title": "Feature Contributions (wᵢ × xᵢ)",
+    "eu_title": "Rational Agent Decision (Maximum Expected Utility)",
+    "eu_subtitle": "EU(a) = P(Phish)·U(a, Phish) + (1 - P(Phish))·U(a, Safe)",
+    "m3_heading": "3. AI Safety Guardrail: Prompt Injection & KZ DLP Tokenizer (Week 10)",
+    "dlp_entities_title": "Detected PII Entities (KZ IIN Mod-11 & Luhn) & Prompt Attacks:",
+    "sanitized_title": "Sanitized (Tokenized) Safe Prompt for LLM:",
+    "btn_copy": "Copy",
+    "train_title": "Interactive Bayesian Corpus Retraining (Week 6)",
+    "train_desc": "Add a new sample message as 'Phishing' or 'Safe'. The model updates token counts and likelihoods in real time.",
+    "train_input_label": "New Training Sentence (KZ / EN):",
+    "btn_train_phish": "Train as Phishing",
+    "btn_train_safe": "Train as Safe",
+    "stat_vocab": "Vocabulary Size |V|",
+    "stat_phish_tokens": "Phish Token Count",
+    "stat_safe_tokens": "Safe Token Count",
+    "vocab_table_title": "Bayesian Likelihood Table (Top Discriminative Tokens)",
+    "bench_title": "Algorithm Testing & Evaluation Metrics (Section 8)",
+    "bench_subtitle": "Live Accuracy, Precision, Recall, F1-Score and Confusion Matrix across 60 records (35 training + 25 held-out test cases, split by scam scheme).",
+    "btn_run_bench": "Re-run All 25 Tests",
+    "th_case": "Test Case & Input Snippet",
+    "th_expected": "Ground Truth",
+    "th_predicted": "Prediction",
+    "th_action": "Inspect",
+    "doc_proposal_title": "Section 13: Project Topic Approval Sheet",
+    "doc_qa_title": "Section 11: Project Defense Q&A Guide",
+    "limit_box_title": "Section 8: Error Analysis & Model Limitations (FP & FN Edge Cases)",
+    "limit_box_desc": "Real-world ML results depend heavily on data size. On our held-out set (25 records, split by scam scheme) the combined model makes 3 errors (№30, №36, №37): #30 is a link-less 'remote job' scam (False Negative); #36 and #37 are official security advisories that mention IIN/card/SMS-code words (False Positive). With only 60 records the metrics are rough estimates. Most texts are reconstructed from schemes described in public warnings (see data/SOURCES.md).",
+    "nav_scanner": "Scanner",
+    "hero_badge": "AI-powered protection",
+    "hero_t1": "Detect Phishing",
+    "hero_t2": "with Artificial Intelligence",
+    "hero_sub": "Analyzes a message and a link, picks BLOCK, QUARANTINE or ALLOW, and masks personal data.",
+    "hero_cta1": "Start analysis",
+    "hero_cta2": "View results",
+    "c1_t": "Naive Bayes",
+    "c1_d": "Probability from text tokens",
+    "c2_t": "Logistic Regression",
+    "c2_d": "URL features and MEU decision",
+    "c3_t": "AI Safety",
+    "c3_d": "Prompt injection and DLP",
+    "c4_t": "Held-out set",
+    "c4_d": "60 records, 25 test cases",
+    "s1": "Accuracy (test)",
+    "s2": "Records",
+    "s3": "Unit tests",
+    "s4": "AI topics"
+  }
+};
 
     // =========================================================================
     // 2. WEEK 6: NAIVE BAYES CORPUS & MODEL
@@ -1029,6 +966,29 @@
       const res = evaluatePipeline(url, text, prior, alpha, fnCost);
       runBenchmarkSuite();
 
+      if (!url.trim() && !text.trim()) {
+        const kk = currentLang === 'kk';
+        document.getElementById('verdictBanner').className = "glass-card rounded-2xl p-5 border-l-4 border-l-zinc-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+        const b = document.getElementById('verdictBadge');
+        b.className = "px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-white/5 text-zinc-400 border border-white/10";
+        b.textContent = "READY";
+        document.getElementById('verdictTitle').textContent = kk ? "Сілтеме мен мәтінді енгізіңіз" : "Enter a link and a message";
+        document.getElementById('verdictExplanation').textContent = kk ? "Жүйе хабарлама қауіпті ме, жоқ па, өзі анықтайды." : "The system will decide on its own whether the message is dangerous.";
+        const sc = document.getElementById('combinedRiskScore');
+        sc.className = "text-3xl font-black mono text-zinc-500"; sc.textContent = "—";
+        document.getElementById('confidenceSubtext').textContent = "";
+        document.getElementById('bayesPosteriorBadge').textContent = "—";
+        document.getElementById('mlProbBadge').textContent = "—";
+        document.getElementById('bayesTokenTableBody').innerHTML = "";
+        document.getElementById('euActionsContainer').innerHTML = "";
+        document.getElementById('mlFeatureDetailsList').textContent = "";
+        document.getElementById('sanitizedPromptOutput').textContent = "";
+        document.getElementById('dlpEntitiesList').innerHTML = "";
+        document.getElementById('safetyStatusBadge').textContent = "—";
+        updateMLChart(res.ml.features);
+        return;
+      }
+
       // 1. Update Verdict Banner
       const pct = (res.combinedProb * 100).toFixed(1) + "%";
       document.getElementById('combinedRiskScore').textContent = pct;
@@ -1044,7 +1004,7 @@
       if (res.bestAction.code === 'BLOCK') {
         banner.className = "glass-card rounded-2xl p-5 border-l-4 border-l-rose-500 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
         badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40";
-        badge.textContent = "🚨 BLOCK (MEU OPTIMAL)";
+        badge.textContent = "BLOCK (MEU OPTIMAL)";
         scoreEl.className = "text-3xl font-black mono text-rose-400";
         title.textContent = currentLang === 'kk'
           ? "Қауіпті фишинг немесе AI шабуылы анықталды!"
@@ -1055,7 +1015,7 @@
       } else if (res.bestAction.code === 'QUARANTINE') {
         banner.className = "glass-card rounded-2xl p-5 border-l-4 border-l-amber-500 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
         badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40";
-        badge.textContent = "⚠️ QUARANTINE (MEU OPTIMAL)";
+        badge.textContent = "QUARANTINE (MEU OPTIMAL)";
         scoreEl.className = "text-3xl font-black mono text-amber-400";
         title.textContent = currentLang === 'kk'
           ? "Күмәнді мазмұн: Карантин және DLP тексеруі"
@@ -1066,7 +1026,7 @@
       } else {
         banner.className = "glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500 flex flex-col sm:flex-row sm:items-center justify-between gap-4";
         badge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
-        badge.textContent = "✅ ALLOW (MEU OPTIMAL)";
+        badge.textContent = "ALLOW (MEU OPTIMAL)";
         scoreEl.className = "text-3xl font-black mono text-emerald-400";
         title.textContent = currentLang === 'kk'
           ? "Хабарлама қауіпсіз деп танылды"
@@ -1162,8 +1122,8 @@
           datasets: [{
             label: 'wᵢ × xᵢ',
             data: dataVals,
-            backgroundColor: 'rgba(16, 185, 129, 0.65)',
-            borderColor: 'rgba(16, 185, 129, 1)',
+            backgroundColor: 'rgba(239, 68, 68, 0.7)',
+            borderColor: 'rgba(239, 68, 68, 1)',
             borderWidth: 1,
             borderRadius: 6
           }]
@@ -1323,7 +1283,10 @@
     // =========================================================================
     // 9. CONTROLS, TABS & HELPERS
     // =========================================================================
+    function goLab() { document.getElementById('lab').scrollIntoView({ behavior: 'smooth' }); }
+
     function switchTab(tabName) {
+      setTimeout(goLab, 0);
       const tabs = ['scanner', 'training', 'testing', 'docs'];
       tabs.forEach(t => {
         const el = document.getElementById(`tab-${t}`);
@@ -1340,9 +1303,9 @@
         const btn = document.getElementById(btnMap[k]);
         if (!btn) return;
         if (k === tabName) {
-          btn.className = "tab-btn active-tab text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition";
+          btn.className = "tab-btn text-red-500 text-xs sm:text-sm font-medium transition";
         } else {
-          btn.className = "tab-btn text-slate-300 hover:text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition";
+          btn.className = "tab-btn text-zinc-300 hover:text-white text-xs sm:text-sm font-medium transition";
         }
       });
 
@@ -1359,7 +1322,7 @@
         ? "px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition"
         : "px-2.5 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
 
-      const dict = I18N[lang];
+      const dict = Object.assign({}, I18N.kk, I18N[lang]);
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (dict[key]) el.textContent = dict[key];
@@ -1414,10 +1377,12 @@
 
     window.onload = function () {
       initBayesModel();
-      loadPreset('egov_scam');
+      runAnalysis();
       renderVocabTable();
       runBenchmarkSuite();
     };
   </script>
+</body>
+</html>
 </body>
 </html>
